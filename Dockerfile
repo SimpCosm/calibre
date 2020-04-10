@@ -18,11 +18,16 @@ RUN apk update && \
     wget -O- ${CALIBRE_INSTALLER_SOURCE_CODE_URL} | python -c "import sys; main=lambda:sys.stderr.write('Download failed\n'); exec(sys.stdin.read()); main(install_dir='/opt', isolated=True)" && \
     rm -rf /tmp/calibre-installer-cache
 
-RUN apk update && apk add dcron curl wget rsync ca-certificates && rm -rf /var/cache/apk/*
 
-RUN mkdir -p /var/log/cron && \
-    mkdir -m 0644 -p /var/spool/cron/crontabs && \
-    touch /var/log/cron/cron.log && \
-    mkdir -m 0644 -p /etc/cron.d
+ADD crontab.txt /crontab.txt
+ADD main.py /main.py
+COPY entry.sh /entry.sh
+RUN chmod 755 /script.sh /entry.sh
+RUN /usr/bin/crontab /crontab.txt
 
+RUN mkdir -p /data/ebook && \
+    mkdir -p /data/audio
 
+VOLUME ["/data"] 
+
+CMD ["/entry.sh"]
