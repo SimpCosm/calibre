@@ -65,4 +65,4 @@ def operator(path):
 
 
 if __name__ == "__main__":
-    operator("./")
+    operator("./data")
